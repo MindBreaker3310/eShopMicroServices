@@ -44,10 +44,7 @@ namespace Basket.API
             //services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options => options.Address = new Uri(Configuration["GrpcSettings:DiscountUrl"]));
             services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient> (options =>
             {
-                //AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-                //AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2Support", true);
-                options.Address = new Uri("http://localhost:5003");
-                //options.ChannelOptionsActions.Add(channelOptions => channelOptions.Credentials = ChannelCredentials.Insecure);
+                options.Address = new Uri(Configuration["GrpcSettings:DiscountUrl"]);
             });
 
             services.AddScoped<DiscountGrpcService>();
