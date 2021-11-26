@@ -9,11 +9,6 @@ namespace Basket.API.Models
 
         public List<ShoppingCartItem> Items { get; set; } = new List<ShoppingCartItem>();
 
-
-        public ShoppingCart()
-        {
-        }
-
         public ShoppingCart(string userName)
         {
             this.UserName = userName;

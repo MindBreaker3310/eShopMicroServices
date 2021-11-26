@@ -1,4 +1,8 @@
-﻿using Basket.API.Repositories;
+﻿using System;
+using Basket.API.GrpcServices;
+using Basket.API.Repositories;
+using Discount.Grpc.Protos;
+using Grpc.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +14,7 @@ namespace Basket.API
 {
     public class Startup
     {
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -18,17 +23,34 @@ namespace Basket.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            
+
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = Configuration["CacheSettings:ConnectionString"];
             });
 
             services.AddScoped<IBasketRepository, BasketRepository>();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Basket.API", Version = "v1" });
             });
+
+
+
+            // Grpc Configuration
+            //services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options => options.Address = new Uri(Configuration["GrpcSettings:DiscountUrl"]));
+            services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient> (options =>
+            {
+                //AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+                //AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2Support", true);
+                options.Address = new Uri("http://localhost:5003");
+                //options.ChannelOptionsActions.Add(channelOptions => channelOptions.Credentials = ChannelCredentials.Insecure);
+            });
+
+            services.AddScoped<DiscountGrpcService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

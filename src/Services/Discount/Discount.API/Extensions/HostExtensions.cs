@@ -28,16 +28,17 @@ namespace Discount.API.Extensions
                     command.CommandText = "DROP TABLE IF EXISTS Coupon";
                     command.ExecuteNonQuery();
 
-                    command.CommandText = @"CREATE TABLE Coupon(Id SERIAL PRIMARY KEY,
-                                                                Product VARCHAR(24) NOT NULL,
+                    command.CommandText = @"CREATE TABLE Coupon(Id SERIAL PRIMARY KEY, 
+                                                                ProductName VARCHAR(24) NOT NULL,
                                                                 Description TEXT,
                                                                 Amount INT)";
                     command.ExecuteNonQuery();
 
-                    command.CommandText = "INSERT INTO Coupon(Product, Description, Amount) VALUES('IPhone X', 'Apple學生專案', 150)";
+
+                    command.CommandText = "INSERT INTO Coupon(ProductName, Description, Amount) VALUES('IPhone X', 'IPhone Discount', 150);";
                     command.ExecuteNonQuery();
 
-                    command.CommandText = "INSERT INTO Coupon(Product, Description, Amount) VALUES('Samsung 10', '三星折價券', 100)";
+                    command.CommandText = "INSERT INTO Coupon(ProductName, Description, Amount) VALUES('Samsung 10', 'Samsung Discount', 100);";
                     command.ExecuteNonQuery();
 
                     logger.LogInformation("遷移postgres資料庫完成");

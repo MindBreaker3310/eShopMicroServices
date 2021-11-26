@@ -3,6 +3,9 @@
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
 	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	  <WarningLevel>4</WarningLevel>
+	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Protos\discount.proto" />
 		<None Remove="AutoMapper.Extensions.Microsoft.DependencyInjection" />
@@ -11,7 +14,7 @@
 	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.0.123" />
 		<PackageReference Include="Npgsql" Version="6.0.0" />
-		<PackageReference Include="Grpc.AspNetCore" Version="2.32.0" />
+		<PackageReference Include="Grpc.AspNetCore" Version="2.35.0" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
 	</ItemGroup>
 	<ItemGroup>
