@@ -7,53 +7,33 @@ using Ordering.Domain.Entities;
 
 namespace Ordering.Infrastructure.Persistence
 {
-    //public class OrderContextSeed
-    //{
-    //    public static async Task SeedAsync(OrderContext orderContext, ILogger<OrderContextSeed> logger)
-    //    {
-    //        //如果Orders資料表沒有資料的話
-    //        if (orderContext.Orders.Any())
-    //        {
-    //            orderContext.AddRange(GetDefaultOrders());
-    //            await orderContext.SaveChangesAsync();
-    //            logger.LogInformation("寫入預設訂單", typeof(OrderContext).Name);
-    //        }
-    //    }
-
-    //    private static IEnumerable<Order> GetDefaultOrders()
-    //    {
-    //        return new List<Order>
-    //        {
-    //            new Order()
-    //            {
-    //                UserName = "DefaultUser",
-    //                FirstName = "Defalut",
-    //                LastName = "User",
-    //                EmailAddress = "test@gmail.com",
-    //                AddressLine = "Taipei 101",
-    //                Country = "Taiwan",
-    //                TotalPrice = 999
-    //            }
-    //        };
-    //    }
-    //}
     public class OrderContextSeed
     {
         public static async Task SeedAsync(OrderContext orderContext, ILogger<OrderContextSeed> logger)
         {
-            if (!orderContext.Orders.Any())
+            //如果Orders資料表沒有資料的話
+            if (orderContext.Orders.Any())
             {
-                orderContext.Orders.AddRange(GetPreconfiguredOrders());
+                orderContext.AddRange(GetDefaultOrders());
                 await orderContext.SaveChangesAsync();
-                logger.LogInformation("Seed database associated with context {DbContextName}", typeof(OrderContext).Name);
+                logger.LogInformation("寫入預設訂單", typeof(OrderContext).Name);
             }
         }
 
-        private static IEnumerable<Order> GetPreconfiguredOrders()
+        private static IEnumerable<Order> GetDefaultOrders()
         {
             return new List<Order>
             {
-                new Order() {UserName = "swn", FirstName = "Mehmet", LastName = "Ozkaya", EmailAddress = "ezozkme@gmail.com", AddressLine = "Bahcelievler", Country = "Turkey", TotalPrice = 350 }
+                new Order()
+                {
+                    UserName = "DefaultUser",
+                    FirstName = "Defalut",
+                    LastName = "User",
+                    EmailAddress = "test@gmail.com",
+                    AddressLine = "Taipei 101",
+                    Country = "Taiwan",
+                    TotalPrice = 999
+                }
             };
         }
     }
