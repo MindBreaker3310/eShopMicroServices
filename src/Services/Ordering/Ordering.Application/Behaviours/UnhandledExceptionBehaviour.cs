@@ -8,9 +8,9 @@ namespace Ordering.Application.Behaviours
 {
     public class UnhandledExceptionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<TRequest> _logger;
 
-        public UnhandledExceptionBehaviour(ILogger logger)
+        public UnhandledExceptionBehaviour(ILogger<TRequest> logger)
         {
             _logger = logger;
         }
@@ -25,7 +25,7 @@ namespace Ordering.Application.Behaviours
             catch(Exception ex)
             {
                 var requestName = typeof(TRequest).Name;
-                _logger.LogError(ex, "Application Request: Unhandled Exception for Request {Name} {@Request}", requestName, request);
+                _logger.LogError(ex, $"Application 請求錯誤: 未知的錯誤 {requestName} {request}");
                 throw;
             }
         }

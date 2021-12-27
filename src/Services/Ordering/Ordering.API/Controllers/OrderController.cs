@@ -13,14 +13,14 @@ using Ordering.Application.Features.Orders.Queries.GetOrdersList;
 namespace Ordering.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/v1/[controller]")]
     public class OrderController : ControllerBase
     {
         private readonly IMediator _mediator;
 
         public OrderController(IMediator mediator)
         {
-            _mediator = mediator;
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         [HttpGet("{userName}", Name = "GetOrder")]
@@ -29,23 +29,22 @@ namespace Ordering.API.Controllers
         {
             //建立Request
             var query = new GetOrdersListQuery(userName);
-            //發送給Handler處理
-            List<OrdersVm> orders = await _mediator.Send(query);
+            //發送Request給MediatR處理
+            var orders = await _mediator.Send(query);
             return Ok(orders);
         }
 
-
         // testing purpose
         [HttpPost(Name = "CheckoutOrder")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<ActionResult<int>> CheckoutOrder([FromBody] CheckoutOrderCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
-        [HttpPost(Name = "UpdateOrder")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpPut(Name = "UpdateOrder")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult> UpdateOrder([FromBody] UpdateOrderCommand command)
@@ -54,9 +53,8 @@ namespace Ordering.API.Controllers
             return NoContent();
         }
 
-
-        [HttpPost("{id}", Name = "DeleteOrder")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpDelete("{id}", Name = "DeleteOrder")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult> DeleteOrder(int id)
@@ -65,6 +63,5 @@ namespace Ordering.API.Controllers
             await _mediator.Send(command);
             return NoContent();
         }
-
     }
 }

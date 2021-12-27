@@ -12,7 +12,7 @@ namespace Ordering.Infrastructure.Persistence
         public static async Task SeedAsync(OrderContext orderContext, ILogger<OrderContextSeed> logger)
         {
             //如果Orders資料表沒有資料的話
-            if (orderContext.Orders.Any())
+            if (!orderContext.Orders.Any())
             {
                 orderContext.AddRange(GetDefaultOrders());
                 await orderContext.SaveChangesAsync();
