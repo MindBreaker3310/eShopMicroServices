@@ -3,6 +3,7 @@ using Basket.API.GrpcServices;
 using Basket.API.Repositories;
 using Discount.Grpc.Protos;
 using Grpc.Core;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,31 +24,40 @@ namespace Basket.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            
-
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = Configuration["CacheSettings:ConnectionString"];
             });
 
             services.AddScoped<IBasketRepository, BasketRepository>();
+            services.AddAutoMapper(typeof(Startup));
+
+            // Grpc Configuration
+            //services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options => options.Address = new Uri(Configuration["GrpcSettings:DiscountUrl"]));
+            services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
+            {
+               options.Address = new Uri(Configuration["GrpcSettings:DiscountUrl"]);
+            });
+
+            services.AddScoped<DiscountGrpcService>();
+
+            //可以看到AddMassTransit需要輸入Action type的參數，就是委託把不確定的動作，交由呼叫端來寫。
+            services.AddMassTransit(config =>
+            {
+                config.UsingRabbitMq((context, config) =>
+                {
+                    //使用高級列隊協議amqp://帳號:密碼@網址:port
+                    config.Host(Configuration["EventBusSettings:HostAddress"]);
+                });
+            });
+            services.AddMassTransitHostedService();
+
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Basket.API", Version = "v1" });
             });
-
-
-
-            // Grpc Configuration
-            //services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options => options.Address = new Uri(Configuration["GrpcSettings:DiscountUrl"]));
-            services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient> (options =>
-            {
-                options.Address = new Uri(Configuration["GrpcSettings:DiscountUrl"]);
-            });
-
-            services.AddScoped<DiscountGrpcService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
